@@ -1,5 +1,6 @@
 #!/bin/bash
 
+make
 # Path to the executable program
 PROGRAM=./parking
 
