@@ -1,2 +1,5 @@
 # Task 1 ignore
 parking
+
+# General ignore
+.jukit/
