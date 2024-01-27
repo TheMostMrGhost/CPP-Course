@@ -11,6 +11,7 @@ if [ "$1" == "-v" ]; then
     USE_VALGRIND=true
 fi
 
+cp stack.h tests/stack.h
 # Define an array of test number ranges.
 TEST_NUM_RANGES=(101-110 201-202 301-305 401-407 501-513 601-604)
 
@@ -27,7 +28,7 @@ do
     for ((test_num=start; test_num<=end; test_num++))
     do
         # Compile the C++ code with the current test number.
-        g++ -Wall -Wextra -O2 -std=c++20 -DTEST_NUM=$test_num stack_test.cc stack_test_external.cc -o $executable_name
+        g++ -Wall -Wextra -O2 -std=c++20 -DTEST_NUM=$test_num tests/stack_test.cc tests/stack_test_external.cc -o $executable_name
 
         if [ $? -eq 0 ]; then
             # Run the executable with or without Valgrind based on the user's choice.
@@ -55,3 +56,4 @@ done
 
 # Cleanup: remove the executable file.
 rm -f $executable_name
+rm tests/stack.h
