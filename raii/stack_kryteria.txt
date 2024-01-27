@@ -1,0 +1,44 @@
+=== Proponowane kryteria oceniania piątego zadania ===
+
+== Cele dydaktyczne ==
+
+Studenci powinni poznać:
+- poziomy odporności na wyjątki;
+- schematy pozwalające zapewnić co najmniej silną odporność na wyjątki;
+- zarządzanie pamięcią z użyciem sprytnych wskaźników;
+- schemat implementowania semantyki kopiowania przy modyfikowaniu.
+
+== Ocena z testów automatycznych ==
+
+Przyznawany jest jeden punkt za przejście wszystkich testów z każdej z sześciu
+grup testów. Zarządzanie pamięcią będzie sprawdzane poleceniem
+
+valgrind --error-exitcode=123 --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --run-cxx-freeres=yes -q
+
+== Ocena jakości tekstu źródłowego ==
+
+Zaczynamy od 4 punktów i odejmujemy po jednym punkcie za (przy czym ocena nie
+może być ujemna):
+- niezgodność zawartości repozytorium ze specyfikacją;
+- ostrzeżenia wypisywane przez kompilator;
+- brzydkie formatowanie kodu;
+- nieprzejrzysty kod – sprawdzający nie mógł łatwo zrozumieć, że na pewno nie
+  cieknie pamięć, ewentualnie, gdzie cieknie pamięć;
+- niedotrzymanie wymaganej złożoności czasowej;
+- nieprzejrzysty kod – sprawdzający nie mógł łatwo zrozumieć, dlaczego
+  implementacja poszczególnych metod zapewnia wymaganą gwarancję odporności na
+  wyjątki, że na pewno nie cieknie pamięć, ewentualnie, gdzie cieknie pamięć
+  oraz jaką złożoność ma dana operacja;
+- nieprawidłowe oznaczenie lub brak oznaczenia metod jako noexcept;
+- zaśmiecanie globalnej przestrzeni nazw, nieukrywanie funkcji i struktur
+  pomocniczych jako prywatnych w implementowanej klasie;
+- zbędne lub nadmiarowe #include (nawet gdy plik się kompiluje);
+- niezastosowanie się do kryteriów oceniania poprzednich zadań;
+- niezastosowanie się do uwag udzielonych przy ocenie poprzednich zadań.
+O ile nie zostanie to wykryte przez testy automatyczne, to będą też odejmowane
+punkty za:
+- brak header guard;
+- braki const;
+- nieefektywną implementację kopiowania przy modyfikowaniu, np. niepotrzebne lub
+  zbyt częste kopiowanie;
+- jawne użycie operatora new, np. zamiast użycia std::make_shared.

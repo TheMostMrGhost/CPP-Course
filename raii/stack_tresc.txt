@@ -1,0 +1,148 @@
+Celem tego zadania jest zaimplementowanie szablonu kontenera zachowującego
+się jak stos, w którym każdy element składa się z klucza i wartości.
+Kontener ten powinien zapewniać silne gwarancje odporności na wyjątki oraz
+realizować semantykę kopiowania przy modyfikowaniu (ang. copy on write).
+
+Kopiowanie przy modyfikowaniu to technika optymalizacji szeroko stosowana
+m.in. w strukturach danych z biblioteki Qt oraz dawniej w implementacjach
+std::string. Podstawowa jej idea jest taka, że gdy tworzymy kopię obiektu
+(w C++ za pomocą konstruktora kopiującego lub operator przypisania), to
+współdzieli ona wszystkie wewnętrzne zasoby (które mogą być przechowywane
+w oddzielnym obiekcie na stercie) z obiektem źródłowym. Taki stan trwa do
+momentu, w którym jedna z kopii musi zostać zmodyfikowana. Wtedy modyfikowany
+obiekt tworzy własną kopię zasobów, na których wykonuje modyfikację.
+
+Szablon ma być parametryzowany typami klucza i wartości, oznaczanymi odpowiednio
+przez K i V. Typ klucza K ma semantykę wartości, czyli dostępne są dla niego
+- bezparametrowy konstruktor domyślny, 
+- konstruktor kopiujący, 
+- konstruktor przenoszący 
+- operatory przypisania. 
+
+Na typie K zdefiniowany jest porządek
+liniowy i można na obiektach tego typu wykonywać wszelkie porównania. O typie V
+można jedynie założyć, że ma konstruktor kopiujący.
+
+Klasa stack ma być dostępna w przestrzeni nazw cxx, a jej deklaracja wygląda
+następująco:
+
+namespace cxx {
+  template <typename K, typename V> class stack;
+}
+
+Klasa stack powinna udostępniać niżej opisane operacje. Przy każdej operacji
+podana jest jej złożoność czasowa przy założeniu, że nie trzeba wykonać kopii.
+Złożoność czasowa kopiowania obiektu to O(n log n), gdzie n oznacza liczbę
+elementów przechowywanych na stosie. Wszystkie operacje muszą zapewniać co
+najmniej silną gwarancję odporności na wyjątki, 
+a konstruktor przenoszący
+i destruktor nie mogą zgłaszać wyjątków. !!!!!
+
+- Konstruktory: bezparametrowy tworzący pusty stos, kopiujący i przenoszący.
+  Złożoność O(1).
+
+  stack();
+  stack(stack const &);
+  stack(stack &&);
+
+- Operator przypisania, który przyjmuje argument przez wartość.
+  Złożoność O(1) plus czas niszczenia nadpisywanego obiektu.
+
+  stack & operator=(stack);
+
+- Metoda push wstawia na stos podaną wartość z podanym kluczem.
+  Złożoność O(log n).
+
+  void push(K const &, V const &);
+
+- Bezparametrowa metoda pop usuwa element z wierzchołka stosu. Jeśli stos jest
+  pusty, to podnosi wyjątek std::invalid_argument. Złożoność O(log n).
+
+  void pop();
+
+- Jednoparametrowa metoda pop usuwa ze stosu najbliższy wierzchołka element
+  o podanym kluczu. Jeśli elementu o podanym kluczu nie ma na stosie, to podnosi
+  wyjątek std::invalid_argument. Złożoność O(log n).
+
+  void pop(K const &);
+
+TODO:
+- Bezparametrowe metody front zwracają parę referencji do klucza i wartości
+  znajdujących się na wierzchołku stosu. W wersji nie-const zwrócona para
+  powinna umożliwiać modyfikowanie wartości, ale nie klucza. Operacja
+  modyfikująca stos może unieważnić zwrócone referencje. Jeśli stos jest
+  pusty, to podnosi wyjątek std::invalid_argument. Złożoność O(1).
+
+  std::pair<K const &, V &> front();
+  std::pair<K const &, V const &> front() const;
+
+TODO:
+- Jednoparametrowe metody front zwracają referencję do wartości elementu, który
+  ma dany klucz i jest najbliżej wierzchołka stosu. W wersji nie-const zwrócona
+  referencja powinna umożliwiać modyfikowanie wartości. Operacja modyfikująca
+  stos może unieważnić zwróconą referencję. Jeśli elementu o podanym kluczu nie
+  ma na stosie, to podnosi wyjątek std::invalid_argument. Złożoność O(log n).
+
+  V & front(K const &);
+  V const & front(K const &) const;
+
+- Metoda size zwraca liczbę elementów na stosie. Złożoność O(1).
+
+  size_t size() const;
+
+- Metoda count zwraca liczbę elementów na stosie o podanym kluczu.
+  Złożoność O(log n).
+
+  size_t count(K const &) const;
+
+- Metoda clear czyści stos, czyli usuwa wszystkie elementy ze stosu.
+  Złożoność O(n).
+
+  void clear();
+
+TODO:
+- Iterator const_iterator i metody cbegin, cend, oraz działające na iteratorze
+  operatory przypisania (=), porównania (== i !=), inkrementacji (zarówno
+  prefiksowy, jak i postfiksowy operator ++), dostępu do wartości (* i ->)
+  pozwalające przeglądać zbiór kluczy w rosnącej kolejności ich wartości.
+  Jeśli nie nastąpiło skopiowanie stosu, iterator pozostaje ważny. Iterator musi
+  spełniać koncept std::forward_iterator. Wszelkie operacje w czasie O(log n).
+  Przeglądanie wszystkich kluczy w czasie O(n). Iterator służy jedynie do
+  przeglądania kluczy i za jego pomocą nie można modyfikować stosu, więc
+  zachowuje się jak const_iterator z biblioteki standardowej.
+
+Tam, gdzie jest to możliwe i uzasadnione, należy opatrzyć metody kwalifikatorami
+const i noexcept.
+
+Obiekt klasy stack powinien przechowywać tylko po jednej kopii wstawionych
+kluczy i wartości. Nie należy przechowywać kopii równych kluczy.
+
+Klasa stack powinna być przezroczysta na wyjątki, czyli powinna przepuszczać
+wszelkie wyjątki zgłaszane przez wywoływane przez nią funkcje i przez operacje
+na jej składowych, a obserwowalny stan obiektu nie powinien się zmienić.
+TODO:
+W szczególności operacje modyfikujące zakończone niepowodzeniem nie mogą
+unieważniać iteratorów.
+
+Przykład użycia znajduje się w pliku stack_example.cc.
+
+Rozwiązanie będzie kompilowane poleceniem
+
+g++ -Wall -Wextra -O2 -std=c++20 *.cc
+
+Rozwiązanie powinno być zawarte w pliku stack.h, który należy umieścić
+w repozytorium w katalogu
+
+grupaN/zadanie5/ab123456+cd123456
+
+lub
+
+grupaN/zadanie5/ab123456+cd123456+ef123456
+
+gdzie N jest numerem grupy, a ab123456, cd123456, ef123456 są identyfikatorami
+członków zespołu umieszczającego to rozwiązanie. Katalog z rozwiązaniem nie
+powinien zawierać innych plików. Nie wolno umieszczać w repozytorium plików
+dużych, wykonywalnych, binarnych, tymczasowych (np. *.o) ani innych zbędnych.
+
+TODO:
+- co się dzieje jak jest PhD student nauczycielem i uczniem w tym samym kursie?
