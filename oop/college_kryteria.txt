@@ -1,0 +1,46 @@
+=== Proponowane kryteria oceniania szóstego zadania ===
+
+== Cele dydaktyczne ==
+
+Studenci powinni poznać:
+- dziedziczenie, wielodziedziczenie;
+- dziedziczenie public, protected, private;
+- pojęcia metody wirtualnej, klasy wirtualnej, dziedziczenia wirtualnego;
+- pojęcie klasy abstrakcyjnej;
+- polimorfizm;
+- zarządzanie pamięcią z użyciem sprytnych wskaźników.
+
+== Ocena automatyczna ==
+
+Będzie 6 automatycznych testów. Za każdy test, który program przejdzie
+poprawnie, stawiamy jeden punkt. Testy zostaną ujawnione dopiero po upłynięciu
+terminu oddania zadania. Zarządzanie pamięcią będzie sprawdzane poleceniem
+
+valgrind --error-exitcode=123 --leak-check=full --show-leak-kinds=all --errors-for-leak-kinds=all --run-cxx-freeres=yes -q
+
+== Ocena jakości kodu ==
+
+Zaczynamy od 4 punktów i odejmujemy po jednym punkcie za (przy czym ocena nie
+może być ujemna):
+- niezgodność zawartości repozytorium ze specyfikacją
+- ostrzeżenia wypisywane przez kompilator
+- brak header guard, jeśli nie zostało to wykryte przez testy automatyczne;
+- braki const, jeśli nie zostało to wykryte przez testy automatyczne;
+- brak wirtualnych destruktorów (tam gdzie trzeba), jeśli nie zostało to
+  wykryte przez testy automatyczne;
+- problemy z zarządzaniem pamięci, jeśli nie zostało to wykryte przez testy
+  automatyczne;
+- brak wyodrębnionych klas dla różnych rodzajów pojęć, błędy w projektowaniu
+  hierarchii klas;
+- „copy-paste”, czyli powtarzanie kodu, który można uwspólnić;
+- brak właściwej enkapsulacji, m.in. zwracanie modyfikowalnych struktur
+  danych, zbyt duże możliwości modyfikacji stanu obiektu (zbyt dużo
+  publicznych metod, „głupie” publiczne settery i gettery)
+- nieukrycie pomocniczych funkcji, klas, struktur;
+- brzydkie formatowanie kodu, zbyt duże klasy lub metody, nieprzejrzysty kod,
+  zbyt dużo powiązań;
+- brak komentarzy wyjaśniających założenia projektowe;
+- zbędne #include, brakujące #include, np. włączone niejawnie;
+- inne błędy, które nie powinny się już przytrafiać, które są wymienione
+  w kryteriach do poprzednich zadań, które zostały wytknięte w komentarzach
+  do ocen poprzednich zadań.
